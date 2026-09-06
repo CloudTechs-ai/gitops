@@ -10,7 +10,7 @@ spec:
 
   sourceRepos:
     # Replace '<your-username>' with your GitHub username or org name
-    - "https://github.com/<your-username>/gitops.git"
+    - "https://github.com/CloudTechs-ai/gitops.git"
 
   destinations:
     - server: https://kubernetes.default.svc
