@@ -3,12 +3,14 @@ kind: AppProject
 metadata:
   name: pharma
   namespace: argocd
+  labels:
+    managed-by: terraform
 spec:
   description: Pharma microservices project
 
   sourceRepos:
     # Replace '<your-username>' with your GitHub username or org name
-    - "https://github.com/CloudTechs-ai/gitops.git"
+    - "https://github.com/<your-username>/gitops.git"
 
   destinations:
     - server: https://kubernetes.default.svc
@@ -25,3 +27,14 @@ spec:
   namespaceResourceWhitelist:
     - group: "*"
       kind: "*"
+
+  orphanedResources:
+    warn: false
+
+  roles:
+    - name: pharma-admin
+      description: Admin role for pharma project
+      policies:
+        - p, proj:pharma:pharma-admin, applications, *, pharma/*, allow
+      groups:
+        - pharma-devops-team
