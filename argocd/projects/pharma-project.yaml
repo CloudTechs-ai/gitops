@@ -3,6 +3,8 @@ kind: AppProject
 metadata:
   name: pharma
   namespace: argocd
+  labels:
+    managed-by: terraform
 spec:
   description: Pharma microservices project
 
@@ -25,3 +27,14 @@ spec:
   namespaceResourceWhitelist:
     - group: "*"
       kind: "*"
+
+  orphanedResources:
+    warn: false
+
+  roles:
+    - name: pharma-admin
+      description: Admin role for pharma project
+      policies:
+        - p, proj:pharma:pharma-admin, applications, *, pharma/*, allow
+      groups:
+        - pharma-devops-team
