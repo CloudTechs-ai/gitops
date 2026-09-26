@@ -44,7 +44,7 @@ The platform follows a **GitOps / Infrastructure-as-Code architecture** where ap
 
 
               ┌──────────────────────────────────────┐
-              │            DELIVERY PIPELINE          │
+              │            DELIVERY PIPELINE         │
               │                                      │
               │ Developer                            │
               │    │                                 │
@@ -54,14 +54,14 @@ The platform follows a **GitOps / Infrastructure-as-Code architecture** where ap
               │    ▼                                 │
               │ GitHub Actions                       │
               │    │                                 │
-              │    ├── Tests                          │
-              │    ├── SAST                           │
-              │    ├── Dependency Scanning            │
-              │    ├── Docker Build                   │
-              │    └── Container Security             │
+              │    ├── Tests                         │
+              │    ├── SAST                          │
+              │    ├── Dependency Scanning           │
+              │    ├── Docker Build                  │
+              │    └── Container Security            │
               │    │                                 │
               │    ▼                                 │
-              │ Amazon ECR                            │
+              │ Amazon ECR                           │
               │    │                                 │
               │    ▼                                 │
               │ GitOps Repository                    │
