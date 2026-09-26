@@ -1,22 +1,18 @@
 replicaCount: 1
-fullnameOverride: api-gateway
+fullnameOverride: auth-service
 image:
-  repository: 575141563132.dkr.ecr.us-east-1.amazonaws.com/api-gateway
+  repository: 575141563132.dkr.ecr.us-east-1.amazonaws.com/auth-service
   tag: sha-32835e1
   pullPolicy: Always
 service:
   type: ClusterIP
-  port: 8080
-  targetPort: 8080
+  port: 8081
+  targetPort: 8081
 ingress:
-  enabled: true
+  enabled: false
   className: alb
-  annotations:
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/group.name: pharma-dev
-  host: ""
-  path: /api
+  host: dev.pharma.internal
+  path: /auth
   pathType: Prefix
 resources:
   requests:
@@ -32,7 +28,7 @@ autoscaling:
   targetCPUUtilizationPercentage: 70
 livenessProbe:
   path: /actuator/health
-  port: 8080
+  port: 8081
   initialDelaySeconds: 60
   periodSeconds: 15
   timeoutSeconds: 5
@@ -40,7 +36,7 @@ livenessProbe:
   successThreshold: 1
 readinessProbe:
   path: /actuator/health/readiness
-  port: 8080
+  port: 8081
   initialDelaySeconds: 30
   periodSeconds: 10
   timeoutSeconds: 5
@@ -49,12 +45,8 @@ readinessProbe:
 configmap:
   SPRING_PROFILES_ACTIVE: dev
   LOG_LEVEL: DEBUG
-  SERVER_PORT: "8080"
-  # These match the fullnameOverride values of each service
-  AUTH_SERVICE_URL: "http://auth-service:8081"
-  DRUG_CATALOG_URL: "http://drug-catalog-service:8082"
-  NOTIFICATION_URL: "http://notification-service:3000"
-  QC_SERVICE_URL: "http://qc-service:8086"
+  SERVER_PORT: "8081"
+  TOKEN_EXPIRATION_MS: "86400000"
   MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,metrics,prometheus"
 envFrom:
   - secretRef:
@@ -69,6 +61,5 @@ volumes:
     emptyDir: {}
 serviceAccount:
   create: true
-  annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::575141563132:role/pharma-dev-eks-role
-  name: api-gateway
+  annotations: {}
+  name: auth-service

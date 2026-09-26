@@ -1,22 +1,18 @@
 replicaCount: 1
-fullnameOverride: api-gateway
+fullnameOverride: manufacturing-service
 image:
-  repository: 575141563132.dkr.ecr.us-east-1.amazonaws.com/api-gateway
+  repository: 575141563132.dkr.ecr.us-east-1.amazonaws.com/manufacturing-service
   tag: sha-32835e1
   pullPolicy: Always
 service:
   type: ClusterIP
-  port: 8080
-  targetPort: 8080
+  port: 8085
+  targetPort: 8085
 ingress:
-  enabled: true
+  enabled: false
   className: alb
-  annotations:
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/group.name: pharma-dev
-  host: ""
-  path: /api
+  host: dev.pharma.internal
+  path: /manufacturing
   pathType: Prefix
 resources:
   requests:
@@ -32,16 +28,16 @@ autoscaling:
   targetCPUUtilizationPercentage: 70
 livenessProbe:
   path: /actuator/health
-  port: 8080
-  initialDelaySeconds: 60
+  port: 8085
+  initialDelaySeconds: 90
   periodSeconds: 15
   timeoutSeconds: 5
   failureThreshold: 3
   successThreshold: 1
 readinessProbe:
   path: /actuator/health/readiness
-  port: 8080
-  initialDelaySeconds: 30
+  port: 8085
+  initialDelaySeconds: 45
   periodSeconds: 10
   timeoutSeconds: 5
   failureThreshold: 3
@@ -49,18 +45,11 @@ readinessProbe:
 configmap:
   SPRING_PROFILES_ACTIVE: dev
   LOG_LEVEL: DEBUG
-  SERVER_PORT: "8080"
-  # These match the fullnameOverride values of each service
-  AUTH_SERVICE_URL: "http://auth-service:8081"
-  DRUG_CATALOG_URL: "http://drug-catalog-service:8082"
-  NOTIFICATION_URL: "http://notification-service:3000"
-  QC_SERVICE_URL: "http://qc-service:8086"
+  SERVER_PORT: "8085"
   MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,metrics,prometheus"
 envFrom:
   - secretRef:
       name: db-credentials
-  - secretRef:
-      name: jwt-secret
 volumeMounts:
   - name: tmp
     mountPath: /tmp
@@ -69,6 +58,5 @@ volumes:
     emptyDir: {}
 serviceAccount:
   create: true
-  annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::575141563132:role/pharma-dev-eks-role
-  name: api-gateway
+  annotations: {}
+  name: manufacturing-service
